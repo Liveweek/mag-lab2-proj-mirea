@@ -4,6 +4,15 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=['*'],
+    allow_methods=['*'],
+    allow_headers=['*']
+)
+
 # db = [
 #     {
 #         "id": 1,
@@ -12,7 +21,6 @@ app = FastAPI()
 #         "is_completed": False
 #     }
 # ]
-
 
 class Increment:
     value = 1
