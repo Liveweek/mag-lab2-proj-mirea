@@ -1,0 +1,25 @@
+version: '3'
+services:
+  backend:
+    container_name: todo_api
+    image: todo_api
+    build: .
+    ports:
+      - "8000:8000"
+    networks:
+      - maglabnetwork
+
+  frontend:
+    container_name: todo_frontend
+    image: todo_frontend
+    build: ./frontend
+    ports:
+      - "80:80"
+    networks:
+      - maglabnetwork
+    depends_on:
+      - backend
+
+networks:
+  maglabnetwork: {}
+  
