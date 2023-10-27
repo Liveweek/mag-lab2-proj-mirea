@@ -1,7 +1,6 @@
 ---
 - name: Deploy Web Application
-  hosts: 127.0.0.1
-  connection: local
+  hosts: staging
   become: true
   tasks:
     - name: Copy requirements
@@ -58,37 +57,27 @@
       command:
         cmd: python3 -m pip install -r requirements.txt
 
-    - name: Copy React files
+    - name: Copy Frontend files
       copy:
-        src: './frontend/'
-        dest: '/project/frontend/'
-
-    - name: Install Node.js dependencies
-      npm:
-        path: /project/frontend
-        production: true
-
-    - name: Build ReactJS frontend
-      command: npm run build
-      args:
-        chdir: /project/frontend
+        src: './frontend/build'
+        dest: '/project/frontend/build'
 
     - name: Copy nginx.conf
       copy:
-        src: ./nginx.conf
+        src: ./frontend/nginx.conf
         dest: /etc/nginx/nginx.conf
-        remote_src: yes
       notify:
         - Reload Nginx
 
     - name: Start Nginx service
       service:
         name: nginx
-        state: started
+        state: restarted
 
     - name: Start server
       command:
-        cmd: python3 -m uvicorn app:app --reload
+        cmd: python3 -m uvicorn --host 0.0.0.0 app:app
+        chdir: /project
 
   handlers:
     - name: Reload Nginx
