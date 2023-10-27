@@ -1,0 +1,97 @@
+---
+- name: Deploy Web Application
+  hosts: 127.0.0.1
+  connection: local
+  become: true
+  tasks:
+    - name: Copy requirements
+      copy:
+        src: './requirements.txt'
+        dest: '/project/'
+
+    - name: Copy app
+      copy:
+        src: './app.py'
+        dest: '/project/'
+
+    - name: Install Python
+      apt:
+        name: python3
+        state: present
+
+    - name: Install pip
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Install venv
+      apt:
+        name: python3-venv
+        state: present
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Manually create the initial virtualenv
+      command:
+        cmd: python3 -m venv venv
+
+    - name: Install Node.js and npm
+      apt:
+        name: 
+        - nodejs
+        - npm
+        state: present
+
+    - name: Install virtualenv
+      command:
+        cmd: python3 -m pip install virtualenv
+
+    - name: Install Python dependencies
+      pip:
+        requirements: /project/requirements.txt
+        virtualenv: /project/venv
+
+    - name: Install Python requirements
+      command:
+        cmd: python3 -m pip install -r requirements.txt
+
+    - name: Copy React files
+      copy:
+        src: './frontend/'
+        dest: '/project/frontend/'
+
+    - name: Install Node.js dependencies
+      npm:
+        path: /project/frontend
+        production: true
+
+    - name: Build ReactJS frontend
+      command: npm run build
+      args:
+        chdir: /project/frontend
+
+    - name: Copy nginx.conf
+      copy:
+        src: ./nginx.conf
+        dest: /etc/nginx/nginx.conf
+        remote_src: yes
+      notify:
+        - Reload Nginx
+
+    - name: Start Nginx service
+      service:
+        name: nginx
+        state: started
+
+    - name: Start server
+      command:
+        cmd: python3 -m uvicorn app:app --reload
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded
