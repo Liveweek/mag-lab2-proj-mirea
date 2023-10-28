@@ -1,6 +1,6 @@
 ---
 - name: Deploy Web Application
-  hosts: staging
+  hosts: my_servers
   become: true
   tasks:
     - name: Copy requirements
