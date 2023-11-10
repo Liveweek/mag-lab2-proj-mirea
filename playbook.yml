@@ -76,7 +76,7 @@
 
     - name: Start server
       command:
-        cmd: python3 -m uvicorn app:app --host 0.0.0.0
+        cmd: nohup python3 -m uvicorn app:app --host 0.0.0.0
         chdir: /project
 
   handlers:
