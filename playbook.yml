@@ -60,7 +60,7 @@
     - name: Copy Frontend files
       copy:
         src: './frontend/build'
-        dest: '/project/frontend/build'
+        dest: '/project/frontend'
 
     - name: Copy nginx.conf
       copy:
