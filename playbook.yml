@@ -1,6 +1,5 @@
 ---
 - name: Deploy Web Application
-  hosts: 192.168.1.10
   become: true
   tasks:
     - name: Copy requirements
