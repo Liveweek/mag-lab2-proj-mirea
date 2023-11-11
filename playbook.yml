@@ -74,10 +74,6 @@
         name: nginx
         state: restarted
         
-    - name : Remove all gunicorn workers
-      command:
-        cmd: pkill -f gunicorn
-        
     - name: Start server
       command:
         cmd: python3 -m gunicorn app:app -w 1 -k uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000 --daemon
